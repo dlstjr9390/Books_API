@@ -17,8 +17,8 @@ public class ProductController {
   private final ProductService productService;
 
   @GetMapping("/search")
-  public List<BooksDto> searchBooks(@RequestParam String query) {
-
-    return productService.searchQuery(query);
+  public String searchBooks(@RequestParam String query) {
+    int[] count = productService.searchQuery(query);
+    return "카테고리 " + count[1] + "건에 관한 도서" + count[0] + "건 저장 완료";
   }
 }

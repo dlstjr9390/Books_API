@@ -24,31 +24,40 @@ public class ProductService {
   private final RestTemplate restTemplate;
   private final BooksRepository booksRepository;
 
-  public List<BooksDto> searchQuery(String query){
+  public int[] searchQuery(String query){
 
     String API_KEY = "ttbpsu022028001";
     String BASE_URL = "http://www.aladin.co.kr/ttb/api/ItemList.aspx";
+    int booksCount = 0;
+    int categoryCount = 0;
 
-    URI uri = UriComponentsBuilder
-        .fromUriString(BASE_URL)
-        .queryParam("ttbkey", API_KEY)
-        .queryParam(query)
-        .build()
-        .toUri();
+    int[] categories = {1230,90452,53471,53489,53513,53511,53509,53510,53512,53476,53495,53493,53491,53492,53494,53490,53474,53478,53480,53485,53500,53502,53503,53501,53473,53484,53479,53472,53482,53497,53496,53499,53498,53487,53483,53477,53475,53481,53486,90456,90455,53488,53507,53504,53506,53508,53505,55890,53516,53537,53538,53539,53536,53521,53562,55182,53558,53719,53560,53561,53559,53557,53556,53805,53522,53524,53532,53568,53570,53571,53569,53525,54711,54709,54710,54708,161753,53528,53514,53520,53529,53526,53530,53534,53523,147647,53527,53567,53566,53565,53564,53533,53573,53574,53572,140262,53517};
 
-    RequestEntity<Void> requestEntity = RequestEntity
-        .get(uri)
-        .build();
+    for(int categoryId : categories){
+      URI uri = UriComponentsBuilder
+          .fromUriString(BASE_URL)
+          .queryParam("ttbkey", API_KEY)
+          .queryParam(query)
+          .queryParam("categoryId", categoryId)
+          .build()
+          .toUri();
 
-    ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
+      RequestEntity<Void> requestEntity = RequestEntity
+          .get(uri)
+          .build();
 
-    List<BooksDto> booksDtoList = fromJSONtoItems(responseEntity.getBody());
+      ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
 
-    for(BooksDto booksDto : booksDtoList){
-      insertBooks(booksDto);
+      List<BooksDto> booksDtoList = fromJSONtoItems(responseEntity.getBody());
+
+      for(BooksDto booksDto : booksDtoList){
+        insertBooks(booksDto);
+        booksCount++;
+      }
+
+      categoryCount++;
     }
-
-    return booksDtoList;
+    return new int[]{booksCount,categoryCount};
   }
 
   public void insertBooks(BooksDto booksDto){
