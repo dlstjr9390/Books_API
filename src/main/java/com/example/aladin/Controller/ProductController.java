@@ -1,6 +1,7 @@
 package com.example.aladin.Controller;
 
 import com.example.aladin.Dto.BooksDto;
+import com.example.aladin.Entity.Books;
 import com.example.aladin.Service.ProductService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,15 @@ public class ProductController {
 
   private final ProductService productService;
 
-  @GetMapping("/search")
-  public String searchBooks(@RequestParam String query) {
+  @GetMapping("/insert")
+  public String insertBooks(@RequestParam String query) {
     int[] count = productService.searchQuery(query);
     return "카테고리 " + count[1] + "건에 관한 도서" + count[0] + "건 저장 완료";
+  }
+
+  @GetMapping("/search")
+  public List<BooksDto> searchBooks(@RequestParam String type, @RequestParam String content) {
+
+    return productService.searchBooks(type,content);
   }
 }

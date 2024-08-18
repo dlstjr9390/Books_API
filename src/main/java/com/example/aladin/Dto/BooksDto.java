@@ -1,5 +1,6 @@
 package com.example.aladin.Dto;
 
+import com.example.aladin.Entity.Books;
 import java.sql.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,4 +32,17 @@ public class BooksDto {
     this.publisher = bookJson.getString("publisher");
     this.categoryId = bookJson.getLong("categoryId");
   }
+
+  public BooksDto(Books books) {
+    this.itemId = books.getItemId();
+    this.title = books.getTitle();
+    this.author = books.getAuthor();
+    this.pubDate = String.valueOf(books.getPubDate());
+    this.description = books.getDescription();
+    this.isbn = books.getIsbn();
+    this.price = books.getPrice();
+    this.publisher = books.getPublisher();
+    this.categoryId = books.getCategoryId();
+  }
+
 }

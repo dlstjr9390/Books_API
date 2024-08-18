@@ -3,6 +3,7 @@ package com.example.aladin.Service;
 import com.example.aladin.Dto.BooksDto;
 import com.example.aladin.Entity.Books;
 import com.example.aladin.Repository.BooksRepository;
+import jakarta.persistence.EntityManager;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,4 +81,17 @@ public class ProductService {
     return booksDtoList;
   }
 
+  public List<BooksDto> searchBooks (String type, String content){
+
+      List<Books> booksList = booksRepository.findBooks(type,content);
+      List<BooksDto> booksDtoList = new ArrayList<>();
+
+      for(Books book : booksList){
+        BooksDto booksDto = new BooksDto(book);
+        booksDtoList.add(booksDto);
+      }
+
+      return booksDtoList;
+
+  }
 }
