@@ -28,4 +28,10 @@ public class ProductController {
 
     return productService.searchBooks(type,content);
   }
+
+  @GetMapping("/searchByMybatis")
+  public List<BooksDto> searchBooksByMybatis(@RequestParam String type, @RequestParam String content) {
+
+    return productService.searchBooksByMybatis(type,content);
+  }
 }

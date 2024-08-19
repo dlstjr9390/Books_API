@@ -2,6 +2,7 @@ package com.example.aladin.Service;
 
 import com.example.aladin.Dto.BooksDto;
 import com.example.aladin.Entity.Books;
+import com.example.aladin.Mapper.BooksMapper;
 import com.example.aladin.Repository.BooksRepository;
 import jakarta.persistence.EntityManager;
 import java.net.URI;
@@ -9,8 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,11 +22,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @AllArgsConstructor
-
+@Slf4j
 public class ProductService {
 
   private final RestTemplate restTemplate;
   private final BooksRepository booksRepository;
+  private final BooksMapper booksMapper;
 
   public int[] searchQuery(String query){
 
@@ -92,6 +96,21 @@ public class ProductService {
       }
 
       return booksDtoList;
+
+  }
+
+
+  public List<BooksDto> searchBooksByMybatis (String type, String content){
+
+    List<Books> booksList = booksMapper.searchBooks(type,content);
+    List<BooksDto> booksDtoList = new ArrayList<>();
+
+    for(Books book : booksList){
+      BooksDto booksDto = new BooksDto(book);
+      booksDtoList.add(booksDto);
+    }
+
+    return booksDtoList;
 
   }
 }
