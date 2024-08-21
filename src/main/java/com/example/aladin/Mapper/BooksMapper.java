@@ -10,4 +10,5 @@ import org.apache.ibatis.annotations.Param;
 public interface BooksMapper {
   List<Books> searchBooks(String type,String content);
 
+  void deleteBooks(Long booksId);
 }

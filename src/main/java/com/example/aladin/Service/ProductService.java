@@ -5,6 +5,8 @@ import com.example.aladin.Entity.Books;
 import com.example.aladin.Mapper.BooksMapper;
 import com.example.aladin.Repository.BooksRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Table;
+import java.awt.print.Book;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -112,5 +115,29 @@ public class ProductService {
 
     return booksDtoList;
 
+  }
+
+  @Transactional
+  public String deleteBooks(List<Integer> booksId) {
+    String idxList = booksId.toString()
+        .replace("[","")
+        .replace("]","");
+    String[] arrIdxStr = idxList.split(",");
+    ArrayList<String> deletedBooksTitles = new ArrayList<>();
+    try {
+      for (String idxStr : arrIdxStr) {
+        Long idx = Long.valueOf(idxStr.trim());
+        Books books = booksRepository.findBooksByBooksId(idx);
+        if (books == null) {
+          throw new RuntimeException();
+        }
+        deletedBooksTitles.add(books.getTitle());
+        booksMapper.deleteBooks(idx);
+      }
+    } catch (Exception e){
+      throw new RuntimeException();
+    }
+
+    return deletedBooksTitles.get(0) +" 외 "+ (deletedBooksTitles.size()-1) +"권이 목록에서 삭제되었습니다.";
   }
 }

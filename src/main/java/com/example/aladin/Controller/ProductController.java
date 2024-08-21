@@ -5,6 +5,7 @@ import com.example.aladin.Entity.Books;
 import com.example.aladin.Service.ProductService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,5 +34,11 @@ public class ProductController {
   public List<BooksDto> searchBooksByMybatis(@RequestParam String type, @RequestParam String content) {
 
     return productService.searchBooksByMybatis(type,content);
+  }
+
+  @DeleteMapping("/delete")
+  public String searchBooks(@RequestParam List<Integer> booksId) {
+
+    return productService.deleteBooks(booksId);
   }
 }

@@ -18,4 +18,8 @@
     </when>
   </choose>
   </select>
+
+  <delete id="deleteBooks">
+        delete from books where books_id = #{booksId}
+  </delete>
 </mapper>
