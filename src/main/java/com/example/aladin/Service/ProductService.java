@@ -1,6 +1,7 @@
 package com.example.aladin.Service;
 
 import com.example.aladin.Dto.BooksDto;
+import com.example.aladin.Dto.ProductDto;
 import com.example.aladin.Entity.Books;
 import com.example.aladin.Mapper.BooksMapper;
 import com.example.aladin.Repository.BooksRepository;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,8 @@ public class ProductService {
   private final RestTemplate restTemplate;
   private final BooksRepository booksRepository;
   private final BooksMapper booksMapper;
+
+
 
   public int[] searchQuery(String query){
 
@@ -56,7 +60,7 @@ public class ProductService {
 
       ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
 
-      List<BooksDto> booksDtoList = fromJSONtoItems(responseEntity.getBody());
+      List<BooksDto> booksDtoList = fromJSONtoBooks(responseEntity.getBody());
 
       for(BooksDto booksDto : booksDtoList){
         insertBooks(booksDto);
@@ -75,7 +79,7 @@ public class ProductService {
 
   }
 
-  public List<BooksDto> fromJSONtoItems(String responseEntity){
+  public List<BooksDto> fromJSONtoBooks(String responseEntity){
     JSONObject jsonObject = new JSONObject(responseEntity);
     JSONArray books = jsonObject.getJSONArray("item");
     List<BooksDto> booksDtoList = new ArrayList<>();
@@ -140,4 +144,45 @@ public class ProductService {
 
     return deletedBooksTitles.get(0) +" 외 "+ (deletedBooksTitles.size()-1) +"권이 목록에서 삭제되었습니다.";
   }
+
+  public List<ProductDto> searchProducts(String query) {
+
+
+    // 요청 URL 만들기
+    URI uri = UriComponentsBuilder
+        .fromUriString("https://openapi.naver.com")
+        .path("/v1/search/shop.json")
+        .queryParam("display", 15)
+        .queryParam("query", query)
+        .encode()
+        .build()
+        .toUri();
+    log.info("uri = " + uri);
+
+    RequestEntity<Void> requestEntity = RequestEntity
+        .get(uri)
+        .header("X-Naver-Client-Id", "fUqygpZIVJDV8MxEjaTk")
+        .header("X-Naver-Client-Secret", "m_sIMSOr4B")
+        .build();
+
+    ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
+
+    log.info("NAVER API Status Code : " + responseEntity.getStatusCode());
+
+    return fromJSONtoProducts(responseEntity.getBody());
+  }
+
+  public List<ProductDto> fromJSONtoProducts(String responseEntity) {
+    JSONObject jsonObject = new JSONObject(responseEntity);
+    JSONArray products  = jsonObject.getJSONArray("products");
+    List<ProductDto> productDtoList = new ArrayList<>();
+
+    for (Object product : products) {
+      ProductDto productDto = new ProductDto((JSONObject) product);
+      productDtoList.add(productDto);
+    }
+
+    return productDtoList;
+  }
+}
 }
