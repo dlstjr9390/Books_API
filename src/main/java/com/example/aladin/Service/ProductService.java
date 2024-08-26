@@ -5,6 +5,7 @@ import com.example.aladin.Dto.ProductDto;
 import com.example.aladin.Entity.Books;
 import com.example.aladin.Entity.Product;
 import com.example.aladin.Mapper.BooksMapper;
+import com.example.aladin.Mapper.ProductMapper;
 import com.example.aladin.Repository.BooksRepository;
 import com.example.aladin.Repository.ProductRepository;
 import jakarta.persistence.EntityManager;
@@ -36,6 +37,7 @@ public class ProductService {
   private final BooksRepository booksRepository;
   private final BooksMapper booksMapper;
   private final ProductRepository productRepository;
+  private final ProductMapper productMapper;
 
 
 
@@ -179,6 +181,27 @@ public class ProductService {
     }
 
     return fromJSONtoProducts(responseEntity.getBody());
+  }
+
+  public List<ProductDto> searchProductByMybatis (String type, String content){
+    List<Product> poductList;
+
+    if(type.equals("lprice")){
+      int intContent = Integer.parseInt(content);
+      poductList = productMapper.searchProductByPrice(type, intContent);
+    } else {
+      poductList = productMapper.searchProduct(type,content);
+    }
+
+    List<ProductDto> productDtoList = new ArrayList<>();
+
+    for(Product product : poductList){
+      ProductDto productDto = new ProductDto(product);
+      productDtoList.add(productDto);
+    }
+
+    return productDtoList;
+
   }
 
   public List<ProductDto> fromJSONtoProducts(String responseEntity) {

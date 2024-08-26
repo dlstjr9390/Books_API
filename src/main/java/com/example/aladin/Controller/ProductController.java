@@ -43,9 +43,20 @@ public class ProductController {
     return productService.searchBooksByMybatis(type,content);
   }
 
+  @GetMapping("/searchProduct")
+  public List<ProductDto> searchProductByMybatis(
+      @RequestParam String type,
+      @RequestParam String content
+
+  )
+  {
+    return productService.searchProductByMybatis(type, content);
+  }
+
   @DeleteMapping("/delete")
   public String searchBooks(@RequestParam List<Integer> booksId) {
 
     return productService.deleteBooks(booksId);
   }
+
 }

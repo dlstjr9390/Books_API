@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.aladin.Mapper.ProductMapper">
+
+  <select id="searchProduct" resultType="com.example.aladin.Entity.Product">
+    select title, image, link, maker, lprice
+    from product
+    where
+    <choose>
+      <when test="type == 'title'">
+        title LIKE CONCAT('%', #{content}, '%')
+      </when>
+      <when test="type == 'maker'">
+        maker LIKE CONCAT('%', #{content}, '%')
+      </when>
+    </choose>
+  </select>
+
+  <select id="searchProductByPrice" resultType="com.example.aladin.Entity.Product">
+    select title, image, link, maker, lprice
+    from product
+    where lprice &lt; #{intContent}
+
+  </select>
+</mapper>
