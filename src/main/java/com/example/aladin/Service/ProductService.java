@@ -3,8 +3,10 @@ package com.example.aladin.Service;
 import com.example.aladin.Dto.BooksDto;
 import com.example.aladin.Dto.ProductDto;
 import com.example.aladin.Entity.Books;
+import com.example.aladin.Entity.Product;
 import com.example.aladin.Mapper.BooksMapper;
 import com.example.aladin.Repository.BooksRepository;
+import com.example.aladin.Repository.ProductRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Table;
 import java.awt.print.Book;
@@ -33,6 +35,7 @@ public class ProductService {
   private final RestTemplate restTemplate;
   private final BooksRepository booksRepository;
   private final BooksMapper booksMapper;
+  private final ProductRepository productRepository;
 
 
 
@@ -147,12 +150,13 @@ public class ProductService {
 
   public List<ProductDto> searchProducts(String query) {
 
-
+    String NAVER_ID = System.getenv("NAVER_ID");
+    String NAVER_SECRET = System.getenv("NAVER_SECRET");
     // 요청 URL 만들기
     URI uri = UriComponentsBuilder
         .fromUriString("https://openapi.naver.com")
         .path("/v1/search/shop.json")
-        .queryParam("display", 15)
+        .queryParam("display", 100)
         .queryParam("query", query)
         .encode()
         .build()
@@ -161,20 +165,25 @@ public class ProductService {
 
     RequestEntity<Void> requestEntity = RequestEntity
         .get(uri)
-        .header("X-Naver-Client-Id", "fUqygpZIVJDV8MxEjaTk")
-        .header("X-Naver-Client-Secret", "m_sIMSOr4B")
+        .header("X-Naver-Client-Id", NAVER_ID)
+        .header("X-Naver-Client-Secret", NAVER_SECRET)
         .build();
+
 
     ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
 
-    log.info("NAVER API Status Code : " + responseEntity.getStatusCode());
+    List<ProductDto> productDtoList = fromJSONtoProducts(responseEntity.getBody());
+
+    for(ProductDto productDto : productDtoList){
+      insertProducts(productDto);
+    }
 
     return fromJSONtoProducts(responseEntity.getBody());
   }
 
   public List<ProductDto> fromJSONtoProducts(String responseEntity) {
     JSONObject jsonObject = new JSONObject(responseEntity);
-    JSONArray products  = jsonObject.getJSONArray("products");
+    JSONArray products  = jsonObject.getJSONArray("items");
     List<ProductDto> productDtoList = new ArrayList<>();
 
     for (Object product : products) {
@@ -184,5 +193,12 @@ public class ProductService {
 
     return productDtoList;
   }
+
+  public void insertProducts(ProductDto productDto){
+
+    Product products = new Product(productDto);
+    productRepository.save(products);
+
+  }
 }
-}
+

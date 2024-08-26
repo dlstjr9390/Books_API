@@ -1,6 +1,7 @@
 package com.example.aladin.Controller;
 
 import com.example.aladin.Dto.BooksDto;
+import com.example.aladin.Dto.ProductDto;
 import com.example.aladin.Entity.Books;
 import com.example.aladin.Service.ProductService;
 import java.util.List;
@@ -28,6 +29,12 @@ public class ProductController {
   public List<BooksDto> searchBooks(@RequestParam String type, @RequestParam String content) {
 
     return productService.searchBooks(type,content);
+  }
+
+  @GetMapping("/searchNaverProduct")
+  public List<ProductDto> searchNaverProduct(@RequestParam String query){
+
+    return productService.searchProducts(query);
   }
 
   @GetMapping("/searchByMybatis")
