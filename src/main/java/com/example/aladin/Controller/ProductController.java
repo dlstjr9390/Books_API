@@ -14,34 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/product")
 public class ProductController {
 
   private final ProductService productService;
 
-  @GetMapping("/insert")
-  public String insertBooks(@RequestParam String query) {
-    int[] count = productService.searchQuery(query);
-    return "카테고리 " + count[1] + "건에 관한 도서" + count[0] + "건 저장 완료";
-  }
 
-  @GetMapping("/search")
-  public List<BooksDto> searchBooks(@RequestParam String type, @RequestParam String content) {
 
-    return productService.searchBooks(type,content);
-  }
-
-  @GetMapping("/searchNaverProduct")
+  @GetMapping("/searchNaverShop")
   public List<ProductDto> searchNaverProduct(@RequestParam String query){
 
     return productService.searchProducts(query);
   }
 
-  @GetMapping("/searchByMybatis")
-  public List<BooksDto> searchBooksByMybatis(@RequestParam String type, @RequestParam String content) {
-
-    return productService.searchBooksByMybatis(type,content);
-  }
 
   @GetMapping("/searchProduct")
   public List<ProductDto> searchProductByMybatis(
@@ -53,10 +38,10 @@ public class ProductController {
     return productService.searchProductByMybatis(type, content);
   }
 
-  @DeleteMapping("/delete")
-  public String searchBooks(@RequestParam List<Integer> booksId) {
+  @DeleteMapping
+  public String deleteProduct(@RequestParam List<Integer> productId ){
 
-    return productService.deleteBooks(booksId);
+    return productService.deleteProduct(productId);
   }
 
 }

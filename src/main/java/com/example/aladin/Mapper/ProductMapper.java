@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface ProductMapper {
-
-  List<Product> searchProduct(String type,String content);
   List<Product> searchProductByPrice(String type, Integer intContent);
+
+  void deleteProduct(Long productId);
 }

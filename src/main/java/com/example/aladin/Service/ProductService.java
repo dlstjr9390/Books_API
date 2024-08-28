@@ -33,122 +33,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 public class ProductService {
 
-  private final RestTemplate restTemplate;
-  private final BooksRepository booksRepository;
-  private final BooksMapper booksMapper;
   private final ProductRepository productRepository;
   private final ProductMapper productMapper;
-
-
-
-  public int[] searchQuery(String query){
-
-    String API_KEY = "ttbpsu022028001";
-    String BASE_URL = "http://www.aladin.co.kr/ttb/api/ItemList.aspx";
-    int booksCount = 0;
-    int categoryCount = 0;
-
-    int[] categories = {1230,90452,53471,53489,53513,53511,53509,53510,53512,53476,53495,53493,53491,53492,53494,53490,53474,53478,53480,53485,53500,53502,53503,53501,53473,53484,53479,53472,53482,53497,53496,53499,53498,53487,53483,53477,53475,53481,53486,90456,90455,53488,53507,53504,53506,53508,53505,55890,53516,53537,53538,53539,53536,53521,53562,55182,53558,53719,53560,53561,53559,53557,53556,53805,53522,53524,53532,53568,53570,53571,53569,53525,54711,54709,54710,54708,161753,53528,53514,53520,53529,53526,53530,53534,53523,147647,53527,53567,53566,53565,53564,53533,53573,53574,53572,140262,53517};
-
-    for(int categoryId : categories){
-      URI uri = UriComponentsBuilder
-          .fromUriString(BASE_URL)
-          .queryParam("ttbkey", API_KEY)
-          .queryParam(query)
-          .queryParam("categoryId", categoryId)
-          .build()
-          .toUri();
-
-      RequestEntity<Void> requestEntity = RequestEntity
-          .get(uri)
-          .build();
-
-      ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
-
-      List<BooksDto> booksDtoList = fromJSONtoBooks(responseEntity.getBody());
-
-      for(BooksDto booksDto : booksDtoList){
-        insertBooks(booksDto);
-        booksCount++;
-      }
-
-      categoryCount++;
-    }
-    return new int[]{booksCount,categoryCount};
-  }
-
-  public void insertBooks(BooksDto booksDto){
-
-    Books books = new Books(booksDto);
-    booksRepository.save(books);
-
-  }
-
-  public List<BooksDto> fromJSONtoBooks(String responseEntity){
-    JSONObject jsonObject = new JSONObject(responseEntity);
-    JSONArray books = jsonObject.getJSONArray("item");
-    List<BooksDto> booksDtoList = new ArrayList<>();
-
-    for(Object book : books) {
-      BooksDto booksDto = new BooksDto((JSONObject) book);
-      booksDtoList.add(booksDto);
-    }
-
-    return booksDtoList;
-  }
-
-  public List<BooksDto> searchBooks (String type, String content){
-
-      List<Books> booksList = booksRepository.findBooks(type,content);
-      List<BooksDto> booksDtoList = new ArrayList<>();
-
-      for(Books book : booksList){
-        BooksDto booksDto = new BooksDto(book);
-        booksDtoList.add(booksDto);
-      }
-
-      return booksDtoList;
-
-  }
-
-
-  public List<BooksDto> searchBooksByMybatis (String type, String content){
-
-    List<Books> booksList = booksMapper.searchBooks(type,content);
-    List<BooksDto> booksDtoList = new ArrayList<>();
-
-    for(Books book : booksList){
-      BooksDto booksDto = new BooksDto(book);
-      booksDtoList.add(booksDto);
-    }
-
-    return booksDtoList;
-
-  }
-
-  @Transactional
-  public String deleteBooks(List<Integer> booksId) {
-    String idxList = booksId.toString()
-        .replace("[","")
-        .replace("]","");
-    String[] arrIdxStr = idxList.split(",");
-    ArrayList<String> deletedBooksTitles = new ArrayList<>();
-    try {
-      for (String idxStr : arrIdxStr) {
-        Long idx = Long.valueOf(idxStr.trim());
-        Books books = booksRepository.findBooksByBooksId(idx);
-        if (books == null) {
-          throw new RuntimeException();
-        }
-        deletedBooksTitles.add(books.getTitle());
-        booksMapper.deleteBooks(idx);
-      }
-    } catch (Exception e){
-      throw new RuntimeException();
-    }
-
-    return deletedBooksTitles.get(0) +" 외 "+ (deletedBooksTitles.size()-1) +"권이 목록에서 삭제되었습니다.";
-  }
+  private final RestTemplate restTemplate;
 
   public List<ProductDto> searchProducts(String query) {
 
@@ -222,6 +109,30 @@ public class ProductService {
     Product products = new Product(productDto);
     productRepository.save(products);
 
+  }
+
+  @Transactional
+  public String deleteProduct(List<Integer> productId) {
+    String idxList = productId.toString()
+        .replace("[","")
+        .replace("]","");
+    String[] arrIdxStr = idxList.split(",");
+    ArrayList<String> deletedProductTitles = new ArrayList<>();
+    try {
+      for (String idxStr : arrIdxStr) {
+        Long idx = Long.valueOf(idxStr.trim());
+        Product product = productRepository.findProductByProductId(idx);
+        if (product == null) {
+          throw new RuntimeException();
+        }
+        deletedProductTitles.add(product.getTitle());
+        productMapper.deleteProduct(idx);
+      }
+    } catch (Exception e){
+      throw new RuntimeException();
+    }
+
+    return deletedProductTitles.get(0) +" 외 "+ (deletedProductTitles.size()-1) +"개가 목록에서 삭제되었습니다.";
   }
 }
 
