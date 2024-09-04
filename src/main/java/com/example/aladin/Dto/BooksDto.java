@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.json.JSONObject;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class BooksDto {
   private long itemId;

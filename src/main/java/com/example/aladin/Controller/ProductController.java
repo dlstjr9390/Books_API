@@ -42,6 +42,7 @@ public class ProductController {
   public String deleteProduct(@RequestParam List<Integer> productId ){
 
     return productService.deleteProduct(productId);
+
   }
 
 }

@@ -21,6 +21,9 @@ public class Customer {
   private String name;
 
   @Column(nullable = false)
+  private String userID;
+
+  @Column(nullable = false)
   private String password;
 
   @Column(nullable = false)
@@ -28,4 +31,11 @@ public class Customer {
 
   @Column(nullable = false)
   private Boolean isActive;
+
+  public Customer(String name, String userID, String password, String email){
+    this.name = name;
+    this.userID = userID;
+    this.password = password;
+    this.email = email;
+  }
 }
