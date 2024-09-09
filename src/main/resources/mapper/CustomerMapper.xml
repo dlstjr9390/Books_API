@@ -3,7 +3,7 @@
 <mapper namespace="com.example.aladin.Mapper.CustomerMapper">
   <update id="withdraw">
     update customer
-    set isActive = 0
-    where custoemr_id =#{customerId}
+    set is_active = 0
+    where customer_id = #{customerId}
   </update>
 </mapper>
