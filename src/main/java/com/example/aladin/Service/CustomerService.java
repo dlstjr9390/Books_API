@@ -2,6 +2,7 @@ package com.example.aladin.Service;
 
 import com.example.aladin.Dto.SignupRequestDto;
 import com.example.aladin.Entity.Customer;
+import com.example.aladin.Mapper.CustomerMapper;
 import com.example.aladin.Repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +15,7 @@ public class CustomerService {
 
   private final PasswordEncoder passwordEncoder;
   private final CustomerRepository customerRepository;
+  private final CustomerMapper customerMapper;
 
   public String signup(SignupRequestDto signupRequestDto) {
 
@@ -26,5 +28,11 @@ public class CustomerService {
     customerRepository.save(customer);
 
     return "회원가입 완료";
+  }
+
+  public String withdraw(Long customerId) {
+
+    customerMapper.withdraw(customerId);
+    return "회원탈퇴 완료";
   }
 }

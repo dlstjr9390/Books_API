@@ -30,7 +30,7 @@ public class Customer {
   private String email;
 
   @Column(nullable = false)
-  private Boolean isActive;
+  private Boolean isActive = true;
 
   public Customer(String name, String userID, String password, String email){
     this.name = name;
