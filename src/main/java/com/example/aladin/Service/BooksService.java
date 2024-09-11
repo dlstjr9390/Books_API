@@ -82,20 +82,6 @@ public class BooksService {
     return booksDtoList;
   }
 
-  public List<BooksDto> searchBooks (String type, String content){
-
-    List<Books> booksList = booksRepository.findBooks(type,content);
-    List<BooksDto> booksDtoList = new ArrayList<>();
-
-    for(Books book : booksList){
-      BooksDto booksDto = new BooksDto(book);
-      booksDtoList.add(booksDto);
-    }
-
-    return booksDtoList;
-
-  }
-
 
   public List<BooksDto> searchBooksByMybatis (String type, String content){
 

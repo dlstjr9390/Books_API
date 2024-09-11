@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BooksRepository  extends JpaRepository<Books, Long>, BooksRepositoryCustom {
+public interface BooksRepository  extends JpaRepository<Books, Long> {
    Books findBooksByBooksId(Long booksId);
 
 }

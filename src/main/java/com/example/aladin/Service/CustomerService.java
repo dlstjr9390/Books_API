@@ -24,6 +24,14 @@ public class CustomerService {
     String name = signupRequestDto.getName();
     String email = signupRequestDto.getEmail();
 
+    if(duplicationUserIDCheck(userID)){
+      throw new IllegalArgumentException("중복된 회원 아이디 입니다.");
+    }
+
+    if(duplicationEmailCheck(email)){
+      throw new IllegalArgumentException("중복된 이메일 입니다,");
+    }
+
     Customer customer = new Customer(name, userID, password, email);
     customerRepository.save(customer);
 
@@ -35,4 +43,13 @@ public class CustomerService {
     customerMapper.withdraw(customerId);
     return "회원탈퇴 완료";
   }
+
+  private Boolean duplicationEmailCheck(String insertedEmail){
+    return customerRepository.existsByEmail(insertedEmail);
+  }
+
+  private Boolean duplicationUserIDCheck(String insertedUserID){
+    return customerRepository.existsByUserID(insertedUserID);
+  }
+
 }
