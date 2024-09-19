@@ -1,6 +1,7 @@
 package com.example.aladin.Service;
 
 import com.example.aladin.Dto.BooksDto;
+import com.example.aladin.Dto.BooksStatisticsDto;
 import com.example.aladin.Entity.Books;
 import com.example.aladin.Mapper.BooksMapper;
 import com.example.aladin.Repository.BooksRepository;
@@ -121,5 +122,7 @@ public class BooksService {
     return deletedBooksTitles.get(0) +" 외 "+ (deletedBooksTitles.size()-1) +"권이 목록에서 삭제되었습니다.";
   }
 
-
+  public BooksStatisticsDto getBooksStatistics(){
+    return booksMapper.getBooksStatistics();
+  }
 }

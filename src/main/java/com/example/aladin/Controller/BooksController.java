@@ -1,6 +1,7 @@
 package com.example.aladin.Controller;
 
 import com.example.aladin.Dto.BooksDto;
+import com.example.aladin.Dto.BooksStatisticsDto;
 import com.example.aladin.Service.BooksService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,12 @@ public class BooksController {
   public String searchBooks(@RequestParam List<Integer> booksId) {
 
     return booksService.deleteBooks(booksId);
+  }
+
+  @GetMapping("/statstics")
+  public BooksStatisticsDto getBooksStatistics(){
+
+    return booksService.getBooksStatistics();
   }
 
 }

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.aladin.Mapper.BooksMapper">
+  <resultMap id="statisticsResultMap" type="com.example.aladin.Dto.BooksStatisticsDto">
+    <result property="totalPrice" column="total_price"/>
+    <result property="avgPrice" column="avg_price"/>
+    <result property="mostCategoryId" column="category_id"/>
+    <result property="mostPublisher" column="publisher"/>
+  </resultMap>
 
   <select id="searchBooks" resultType="com.example.aladin.Entity.Books">
     select title, author, publisher, price, pub_date
@@ -17,6 +23,32 @@
       publisher LIKE CONCAT('%', #{content}, '%')
     </when>
   </choose>
+  </select>
+
+  <select id="getBoosStatistics" resultMap="statisticsResultMap">
+    select sum(price) as total_price,
+           avg(price) as avg_price
+    from books
+           join (
+                select
+                    category_id,
+                    count(*) as cnt
+                from books
+                group by category_id
+                order by cnt desc
+                limit 1
+            ) as category_count on category_count.category_id = books.category_id
+           join (
+                select
+                    publisher,
+                    count(publisher) as cnt
+                from books
+                group by publisher
+                order by cnt desc
+                limit 1
+            ) as publisher_count on publisher_count.publisher = books.publisher
+
+
   </select>
 
   <delete id="deleteBooks">
